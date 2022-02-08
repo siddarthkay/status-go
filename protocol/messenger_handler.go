@@ -12,6 +12,7 @@ import (
 	"github.com/status-im/status-go/eth-node/crypto"
 	"github.com/status-im/status-go/eth-node/types"
 	"github.com/status-im/status-go/images"
+	"github.com/status-im/status-go/multiaccounts/accounts"
 	"github.com/status-im/status-go/multiaccounts/settings"
 	"github.com/status-im/status-go/protocol/common"
 	"github.com/status-im/status-go/protocol/communities"
@@ -1644,4 +1645,51 @@ func (m *Messenger) updateUnviewedCounts(chat *Chat, mentioned bool) {
 	if mentioned {
 		chat.UnviewedMentionsCount++
 	}
+}
+
+func (m *Messenger) HandleSyncWalletAccount(state *ReceivedMessageState, message protobuf.SyncWalletAccounts) error {
+	dbAccounts, err := m.settings.GetAccounts()
+	if err != nil {
+		return err
+	}
+
+	dbAccountMap := make(map[types.Address]*accounts.Account)
+	for _, acc := range dbAccounts {
+		dbAccountMap[acc.Address] = acc
+	}
+	accs := make([]*accounts.Account, len(message.Accounts))
+	i := 0
+	for _, message := range message.Accounts {
+		dbAcc := dbAccountMap[types.BytesToAddress(message.Address)]
+		if dbAcc != nil && message.Clock <= dbAcc.Clock {
+			continue
+		}
+		acc := &accounts.Account{
+			Address:   types.BytesToAddress(message.Address),
+			Wallet:    message.Wallet,
+			Chat:      message.Chat,
+			Type:      message.Type,
+			Storage:   message.Storage,
+			PublicKey: types.HexBytes(message.PublicKey),
+			Path:      message.Path,
+			Color:     message.Color,
+			Hidden:    message.Hidden,
+			Name:      message.Name,
+			Clock:     message.Clock,
+		}
+
+		accs[i] = acc
+		i++
+	}
+
+	if i == 0 {
+		return nil
+	}
+
+	err = m.settings.SaveAccounts(accs[:i])
+	if err == nil {
+		state.Response.Accounts = accs[:i]
+	}
+
+	return err
 }
