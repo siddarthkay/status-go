@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"sync"
-
+	"github.com/davecgh/go-spew/spew"
 	"github.com/status-im/status-go/appdatabase"
 	"github.com/status-im/status-go/eth-node/types"
 	"github.com/status-im/status-go/multiaccounts/errors"
@@ -180,12 +180,15 @@ func (db *Database) saveSetting(setting SettingField, value interface{}) error {
 }
 
 func (db *Database) parseSaveAndSyncSetting(sf SettingField, value interface{}) (err error) {
-	if sf.ValueHandler() != nil {
-		value, err = sf.ValueHandler()(value)
-		if err != nil {
-			return err
-		}
-	}
+    spew.Dump("parseSaveAndSyncSetting")
+    spew.Dump(sf, value)
+    if sf.ValueHandler() != nil {
+        value, err = sf.ValueHandler()(value)
+        if err != nil {
+            return err
+        }
+    }
+    spew.Dump(value)
 
 	// TODO(samyoul) this is ugly as hell need a more elegant solution
 	if NodeConfig.GetReactName() == sf.GetReactName() {

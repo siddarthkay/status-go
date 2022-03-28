@@ -15,6 +15,7 @@ import (
 	"sync"
 	"time"
 
+
 	"github.com/status-im/status-go/services/browsers"
 
 	"github.com/pkg/errors"

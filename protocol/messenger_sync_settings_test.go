@@ -7,6 +7,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"testing"
+	//"messenger"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/suite"
@@ -78,7 +79,7 @@ type MessengerSyncSettingsSuite struct {
 }
 
 func (s *MessengerSyncSettingsSuite) SetupSuite() {
-	s.ignoreTests = true
+	//s.ignoreTests = true
 }
 
 func (s *MessengerSyncSettingsSuite) SetupTest() {
@@ -299,7 +300,7 @@ func (s *MessengerSyncSettingsSuite) TestSyncSettings() {
 
 func (s *MessengerSyncSettingsSuite) TestSyncSettings_StickerPacks() {
 	if s.ignoreTests {
-		s.T().Skip("Currently sticker pack syncing has been deactivated, testing to resume after sticker packs works correctly")
+		//s.T().Skip("Currently sticker pack syncing has been deactivated, testing to resume after sticker packs works correctly")
 		return
 	}
 

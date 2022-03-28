@@ -118,6 +118,8 @@ func (v *Verifier) Subscribe() chan []*VerificationRecord {
 
 func (v *Verifier) publish(records []*VerificationRecord) {
 	v.logger.Info("publishing records", zap.Any("records", records))
+	//just to test if logger will log anything at all...
+	v.logger.Info("------------------rttryutryuturtututrutyutryu-")
 	// Publish on channels, drop if buffer is full
 	for _, s := range v.subscriptions {
 		select {

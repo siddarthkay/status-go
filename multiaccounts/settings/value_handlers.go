@@ -1,13 +1,15 @@
 package settings
 
 import (
+	"fmt"
 	"encoding/json"
-
+	"github.com/davecgh/go-spew/spew"
 	"github.com/status-im/status-go/eth-node/types"
 	"github.com/status-im/status-go/multiaccounts/errors"
 	"github.com/status-im/status-go/params"
 	"github.com/status-im/status-go/protocol/protobuf"
 	"github.com/status-im/status-go/sqlite"
+	"go.uber.org/zap"
 )
 
 func StringFromSyncProtobuf(ss *protobuf.SyncSetting) interface{} {
@@ -36,7 +38,18 @@ func BoolHandler(value interface{}) (interface{}, error) {
 }
 
 func JSONBlobHandler(value interface{}) (interface{}, error) {
-	return &sqlite.JSONBlob{Data: value}, nil
+	spew.Dump("---------------------------")
+    spew.Dump(value)
+    d := &sqlite.JSONBlob{Data: value}
+    spew.Dump(d)
+	spew.Dump("---------------------------")
+	l := zap.L()
+	l.Info(spew.Sdump(value))
+	l.Info("---------------------------------hi")
+	///just trying to get some debug output to log files
+	fmt.Println("------------------------hello world")
+
+    return d, nil
 }
 
 func AddressHandler(value interface{}) (interface{}, error) {

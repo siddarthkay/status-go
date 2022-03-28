@@ -2,7 +2,8 @@ package accounts
 
 import (
 	"context"
-
+	"github.com/davecgh/go-spew/spew"
+	"go.uber.org/zap"
 	"github.com/status-im/status-go/multiaccounts/accounts"
 	"github.com/status-im/status-go/multiaccounts/settings"
 	"github.com/status-im/status-go/nodecfg"
@@ -21,6 +22,14 @@ type SettingsAPI struct {
 
 func (api *SettingsAPI) SaveSetting(ctx context.Context, typ string, val interface{}) error {
 	// NOTE(Ferossgp): v0.62.0 Backward compatibility, skip this for older clients instead of returning error
+	spew.Dump("--SaveSetting-------------------------")
+	l := zap.L()
+	l.Info(spew.Sdump(ctx))
+	l.Info(spew.Sdump(typ))
+	l.Info(spew.Sdump(val))
+	l.Info("------SaveSetting---------------------------hi")
+
+
 	if typ == "waku-enabled" {
 		return nil
 	}
