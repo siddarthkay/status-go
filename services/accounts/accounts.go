@@ -49,7 +49,23 @@ func (api *API) SaveAccounts(ctx context.Context, accounts []accounts.Account) e
 }
 
 func (api *API) GetAccounts(ctx context.Context) ([]accounts.Account, error) {
-	return api.db.GetAccounts()
+	accounts, err := api.db.GetAccounts()
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range accounts {
+		account := &accounts[i]
+		if account.Wallet && account.DerivedFrom == "" {
+			address, err := api.db.GetWalletRoodAddress()
+			if err != nil {
+				return nil, err
+			}
+			account.DerivedFrom = address.Hex()
+		}
+	}
+
+	return accounts, nil
 }
 
 func (api *API) DeleteAccount(ctx context.Context, address types.Address) error {
